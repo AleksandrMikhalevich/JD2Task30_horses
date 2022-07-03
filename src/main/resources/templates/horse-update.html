@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../static/css/form.css" th:href="@{/css/form.css}" rel="stylesheet"/>
+    <title>Update horse</title>
+</head>
+<body>
+<h1>Редактировать данные о лошади</h1>
+
+<div class="container">
+    <form th:method="PATCH" th:action="@{/{id}(id=${horse.getId()})}" th:object="${horse}">
+
+        <label>Масть:
+            <br>
+            <select name="type" th:field="*{type}">
+                <option value="Гнедая">Гнедая</option>
+                <option value="Вороная">Вороная</option>
+                <option value="Серая">Серая</option>
+                <option value="Рыжая">Рыжая</option>
+            </select>
+            <br>
+        </label>
+
+        <label>Возраст:
+            <br>
+            <input type="text" th:field="*{age}" name="age" required placeholder="age">
+            <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age Error</div>
+            <br>
+        </label>
+
+        <label>Цена:
+            <br>
+            <input type="text" th:field="*{price}" name="price" required placeholder="price">
+            <div style="color:red" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price Error</div>
+            <br>
+        </label>
+        <input type="submit" value="Обновить">
+    </form>
+    <p>
+        <a href="/">Назад</a>
+    </p>
+</div>
+</body>
+</html>
