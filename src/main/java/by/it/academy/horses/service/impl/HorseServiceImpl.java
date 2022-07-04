@@ -56,8 +56,10 @@ public class HorseServiceImpl implements HorseService {
                                 .orElse(null))
                         .and(Optional.ofNullable(horseFilter.getPriceFilter())
                                 .map(SpecificationHorse::getHorseByPriceSpec)
+                                .orElse(null))
+                        .and(Optional.ofNullable(horseFilter.getTypeFilter())
+                                .map(SpecificationHorse::getHorseByTypeSpec)
                                 .orElse(null));
-
         return horseRepository.findAll(horseSpecification).stream()
                 .map(horseMapper::toHorseDto)
                 .collect(Collectors.toList());

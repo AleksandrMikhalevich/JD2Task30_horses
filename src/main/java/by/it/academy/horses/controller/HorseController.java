@@ -1,8 +1,10 @@
 package by.it.academy.horses.controller;
 
+import by.it.academy.horses.filter.HorseFilter;
 import by.it.academy.horses.service.HorseService;
 import by.it.academy.horses.service.dto.HorseDto;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,16 +22,17 @@ public class HorseController {
         this.horseService = horseService;
     }
 
-//    @GetMapping()
-//    public String index(Model model) {
-////        HorseFilter horseFilter = HorseFilter.builder()
-////                //.ageFilter(5)
-////                .priceFilter(1000.00)
-////                .build();
-////        model.addAttribute("horses", horseService.findAll(horseFilter));
-//        model.addAttribute("horses", horseService.findAll());
-//        return "horse-list";
-//    }
+    @GetMapping("/filter")
+    public String index(@Param("typeFilter") String typeFilter, @Param("ageFilter") Integer ageFilter, @Param("priceFilter") Double priceFilter, Model model) {
+        HorseFilter horseFilter = HorseFilter.builder()
+                .typeFilter(typeFilter)
+                .ageFilter(ageFilter)
+                .priceFilter(priceFilter)
+                .build();
+
+        model.addAttribute("horses", horseService.findAllFiltered(horseFilter));
+        return "horse-list";
+    }
 
     @GetMapping("/horse-create")
     public String newHorse(@ModelAttribute("horse") HorseDto horseDto) {
@@ -51,7 +54,7 @@ public class HorseController {
 
     @PatchMapping("/{id}")
     public String updateHorse(@ModelAttribute("horse") @Valid HorseDto horseDto,
-                         BindingResult bindingResult) {
+                              BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return "horse-update";
         horseService.save(horseDto);
@@ -65,8 +68,8 @@ public class HorseController {
     }
 
     @GetMapping("/page/{pageNumber}")
-    public String getPaginatedHorses(@PathVariable(value = "pageNumber") int pageNumber, @RequestParam("sortField") String sortField,
-                                     @RequestParam("sortDir") String sortDir,Model model) {
+    public String getPaginatedHorses(@PathVariable("pageNumber") int pageNumber, @RequestParam("sortField") String sortField,
+                                     @RequestParam("sortDir") String sortDir, Model model) {
         Page<HorseDto> page = horseService.findAllPaginated(pageNumber, sortField, sortDir);
         int totalPages = page.getTotalPages();
         long totalItems = page.getTotalElements();
@@ -82,7 +85,7 @@ public class HorseController {
     }
 
     @GetMapping("/")
-    public String showHorsesFirstPage(Model model){
+    public String showHorsesFirstPage(Model model) {
         return getPaginatedHorses(1, "id", "asc", model);
     }
 }

@@ -7,6 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpecificationHorse {
+
+    public static Specification<Horse> getHorseByTypeSpec(String type) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicatesMain = new ArrayList<>();
+            if (type != null) {
+                predicatesMain.add(criteriaBuilder.equal(root.get(Horse_.TYPE), type));
+            }
+            return criteriaBuilder.and(predicatesMain.toArray(new Predicate[predicatesMain.size()]));
+        };
+    }
     public static Specification<Horse> getHorseByAgeSpec(Integer age) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicatesMain = new ArrayList<>();

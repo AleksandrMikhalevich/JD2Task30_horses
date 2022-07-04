@@ -4,7 +4,61 @@
     <meta charset="UTF-8">
     <link href="../static/css/table.css" th:href="@{/css/table.css}" rel="stylesheet"/>
     <title>Horses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
+<!-- Кнопка-триггер модального окна -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+    Фильтры
+</button>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filtering" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filtering">Настроить фильтры</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <form th:action="@{/filter}">
+            <div class="modal-body">
+                <p>
+                    <label>Фильтрация по масти:
+                        <br>
+                        <select name="typeFilter">
+                            <option value="Гнедая">Гнедая</option>
+                            <option value="Вороная">Вороная</option>
+                            <option value="Серая">Серая</option>
+                            <option value="Рыжая">Рыжая</option>
+                        </select>
+                        <br>
+                    </label>
+                </p>
+                <p>
+                    <label>Фильтрация по возрасту:
+                        <br>
+                        <input type="text" name="ageFilter" placeholder="Укажите возраст">
+                        <br>
+                    </label>
+                </p>
+                <p>
+                    <label>Фильтрация по цене:
+                        <br>
+                        <input type="text" name="priceFilter" placeholder="Укажите цену">
+                        <br>
+                    </label>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <input type="submit" value="Сохранить"/>
+
+<!--                <button type="button" class="btn btn-primary" th:action="@{/filter}">Сохранить</button>-->
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 <body>
 <div style="text-align: center;">
     <div th:switch="${horses}">
@@ -45,32 +99,60 @@
                 </tbody>
             </table>
         </div>
-        <p><a href="/horse-create">Добавить лошадь</a></p>
+        <p>
+        <h4><a href="/horse-create">Добавить лошадь</a></h4>
+        <p>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
 </body>
-<div style="text-align: center;">
-    <footer style="font-size: medium" class="panel-footer">
+<nav aria-label="paginationHorses">
+    <ul class="pagination justify-content-center">
 
-        <a class="page-link" th:if="${currentPage > 1}" th:href="@{'/page/'+ ${1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Первая</a>
-        <span th:unless="${currentPage > 1}">Первая</span>
+        <li class="page-item">
+            <a class="page-link" th:if="${currentPage > 1}"
+               th:href="@{'/page/'+ ${1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Первая
+            </a>
+            <span class="page-link disabled" th:unless="${currentPage > 1}">Первая</span>
+        </li>
 
-        <a th:if="${currentPage > 1}" th:href="@{'/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Предыдущая</a>
-        <span th:unless="${currentPage > 1}">Предыдущая</span>
+        <li class="page-item">
+            <a class="page-link" th:if="${currentPage > 1}"
+               th:href="@{'/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+            <span class="page-link disabled" th:unless="${currentPage > 1}">&laquo;</span>
+        </li>
 
-        <span th:each="i: ${#numbers.sequence(1, totalPages)}">
-        <a th:if="${i != currentPage}" th:href="@{'/page/' + ${i}}">[[${i}]]</a>
-        <span th:unless="${i != currentPage}">[[${i}]]</span>
+        <li class="d-flex flex-row page-item active" aria-current="page">
+            <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+        <a class="page-link" th:if="${i != currentPage}"
+           th:href="@{'/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]
+        </a>
+        <span class="page-link active" th:unless="${i != currentPage}">[[${i}]]</span>
         </span>
+        </li>
 
-        <a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Следующая</a>
-        <span th:unless="${currentPage < totalPages}">Следующая</span>
+        <li class="page-item">
+            <a class="page-link" th:if="${currentPage < totalPages}"
+               th:href="@{'/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+            <span class="page-link disabled" th:unless="${currentPage < totalPages}">&raquo;</span>
+        </li>
 
-        <a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Последняя</a>
-        <span th:unless="${currentPage < totalPages}">Последняя</span>
-        <p>
-            Всего строк [[${totalItems}]] : Страница [[${currentPage}]] из [[${totalPages}]]
-        </p>
-    </footer>
-</div>
+        <li class="page-item">
+            <a class="page-link" th:if="${currentPage < totalPages}"
+               th:href="@{'/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Последняя
+            </a>
+            <span class="page-link disabled" th:unless="${currentPage < totalPages}">Последняя</span>
+        </li>
+
+    </ul>
+    <div style="text-align: center;">
+        Всего строк [[${totalItems}]] : Страница [[${currentPage}]] из [[${totalPages}]]
+    </div>
+</nav>
 </html>
