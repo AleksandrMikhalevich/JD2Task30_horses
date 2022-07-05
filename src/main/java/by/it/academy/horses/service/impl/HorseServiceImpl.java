@@ -34,21 +34,7 @@ public class HorseServiceImpl implements HorseService {
     }
 
     @Override
-    public Page<HorseDto> findAllPaginated(int pageNumber, String sortField, String sortDirection) {
-        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
-                Sort.by(sortField).descending();
-        Pageable paged = PageRequest.of(pageNumber - 1, 5, sort);
-        return horseRepository.findAll(paged).map(horseMapper::toHorseDto);
-    }
-
-    @Override
-    public HorseDto findById(Long horseId) {
-        Horse horse = horseRepository.findById(horseId).orElse(null);
-        return horseMapper.toHorseDto(horse);
-    }
-
-    @Override
-    public List<HorseDto> findAllFiltered(HorseFilter horseFilter) {
+    public Page<HorseDto> findAllPaginated(HorseFilter horseFilter, int pageNumber, String sortField, String sortDirection) {
         Specification<Horse> horseSpecification =
                 Specification
                         .where(Optional.ofNullable(horseFilter.getAgeFilter())
@@ -60,9 +46,16 @@ public class HorseServiceImpl implements HorseService {
                         .and(Optional.ofNullable(horseFilter.getTypeFilter())
                                 .map(SpecificationHorse::getHorseByTypeSpec)
                                 .orElse(null));
-        return horseRepository.findAll(horseSpecification).stream()
-                .map(horseMapper::toHorseDto)
-                .collect(Collectors.toList());
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
+                Sort.by(sortField).descending();
+        Pageable paged = PageRequest.of(pageNumber - 1, 5, sort);
+        return horseRepository.findAll(horseSpecification, paged).map(horseMapper::toHorseDto);
+    }
+
+    @Override
+    public HorseDto findById(Long horseId) {
+        Horse horse = horseRepository.findById(horseId).orElse(null);
+        return horseMapper.toHorseDto(horse);
     }
 
     @Override

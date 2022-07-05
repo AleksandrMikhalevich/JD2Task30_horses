@@ -22,18 +22,6 @@ public class HorseController {
         this.horseService = horseService;
     }
 
-    @GetMapping("/filter")
-    public String index(@Param("typeFilter") String typeFilter, @Param("ageFilter") Integer ageFilter, @Param("priceFilter") Double priceFilter, Model model) {
-        HorseFilter horseFilter = HorseFilter.builder()
-                .typeFilter(typeFilter)
-                .ageFilter(ageFilter)
-                .priceFilter(priceFilter)
-                .build();
-
-        model.addAttribute("horses", horseService.findAllFiltered(horseFilter));
-        return "horse-list";
-    }
-
     @GetMapping("/horse-create")
     public String newHorse(@ModelAttribute("horse") HorseDto horseDto) {
         return "horse-create";
@@ -69,8 +57,14 @@ public class HorseController {
 
     @GetMapping("/page/{pageNumber}")
     public String getPaginatedHorses(@PathVariable("pageNumber") int pageNumber, @RequestParam("sortField") String sortField,
-                                     @RequestParam("sortDir") String sortDir, Model model) {
-        Page<HorseDto> page = horseService.findAllPaginated(pageNumber, sortField, sortDir);
+                                     @RequestParam("sortDir") String sortDir, @Param("typeFilter") String typeFilter,
+                                     @Param("ageFilter") Integer ageFilter, @Param("priceFilter") Double priceFilter, Model model) {
+        HorseFilter horseFilter = HorseFilter.builder()
+                .typeFilter(typeFilter)
+                .ageFilter(ageFilter)
+                .priceFilter(priceFilter)
+                .build();
+        Page<HorseDto> page = horseService.findAllPaginated(horseFilter, pageNumber, sortField, sortDir);
         int totalPages = page.getTotalPages();
         long totalItems = page.getTotalElements();
         List<HorseDto> horses = page.getContent();
@@ -86,6 +80,6 @@ public class HorseController {
 
     @GetMapping("/")
     public String showHorsesFirstPage(Model model) {
-        return getPaginatedHorses(1, "id", "asc", model);
+        return getPaginatedHorses(1, "id", "asc", null, null, null, model);
     }
 }

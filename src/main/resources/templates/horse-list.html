@@ -7,12 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
-<!-- Кнопка-триггер модального окна -->
+
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
     Фильтры
 </button>
-
-<!-- Модальное окно -->
 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filtering" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -20,7 +18,7 @@
                 <h5 class="modal-title" id="filtering">Настроить фильтры</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
             </div>
-            <form th:action="@{/filter}">
+            <form th:href="@{'/page/' + ${currentPage} + '?sortField=id&sortDir=asc'}">
             <div class="modal-body">
                 <p>
                     <label>Фильтрация по масти:
@@ -51,9 +49,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    <input type="submit" value="Сохранить"/>
-
-<!--                <button type="button" class="btn btn-primary" th:action="@{/filter}">Сохранить</button>-->
+                <input type="hidden" name="sortField" value="id">
+                <input type="hidden" name="sortDir" value="asc">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
             </div>
             </form>
         </div>
