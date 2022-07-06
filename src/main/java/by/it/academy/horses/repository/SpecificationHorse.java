@@ -21,7 +21,7 @@ public class SpecificationHorse {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicatesMain = new ArrayList<>();
             if (age != null) {
-                predicatesMain.add(criteriaBuilder.equal(root.get(Horse_.AGE), age));
+                predicatesMain.add(criteriaBuilder.like(root.get(Horse_.AGE).as(String.class), "%" + age + "%"));
             }
             return criteriaBuilder.and(predicatesMain.toArray(new Predicate[predicatesMain.size()]));
         };
@@ -31,7 +31,7 @@ public class SpecificationHorse {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicatesMain = new ArrayList<>();
             if (price != null) {
-                predicatesMain.add(criteriaBuilder.equal(root.get(Horse_.PRICE), price));
+                predicatesMain.add(criteriaBuilder.like(root.get(Horse_.PRICE).as(String.class), "%" + price + "%"));
             }
             return criteriaBuilder.and(predicatesMain.toArray(new Predicate[predicatesMain.size()]));
         };

@@ -7,7 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
-
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
     Фильтры
 </button>
@@ -18,7 +17,7 @@
                 <h5 class="modal-title" id="filtering">Настроить фильтры</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
             </div>
-            <form th:href="@{'/page/' + ${currentPage} + '?sortField=id&sortDir=asc'}">
+            <form th:action="@{'/page/' + ${currentPage} + '?sortField=id&sortDir=asc'}">
             <div class="modal-body">
                 <p>
                     <label>Фильтрация по масти:
@@ -58,6 +57,10 @@
     </div>
 </div>
 <body>
+<p>
+<form action="/horse-create">
+    <button type="submit" class="btn btn-outline-success">Добавить лошадь</button>
+</form>
 <div style="text-align: center;">
     <div th:switch="${horses}">
         <h2 th:case="null">No horses found!</h2>
@@ -87,25 +90,26 @@
                     <td th:text="${horse.type}"></td>
                     <td th:text="${horse.age}"></td>
                     <td th:text="${horse.price}"></td>
-                    <td><a th:href="@{/{id}(id=${horse.getId()})}">Редактировать</a></td>
                     <td>
-                        <form th:method="DELETE" th:action="@{/{id}(id=${horse.getId()})}">
-                            <input type="submit" value="Удалить"/>
+                        <form th:action="@{/{id}/{page}/{sortField}/{sortDir}(id=${horse.id},page=${currentPage},sortField=${sortField},sortDir=${sortDir})}">
+                            <button type="submit" class="btn btn-outline-warning">Редактировать</button>
+                        </form>
+                    <td>
+                        <form th:method="DELETE" th:action="@{/{id}/{page}/{sortField}/{sortDir}(id=${horse.id},page=${currentPage},sortField=${sortField},sortDir=${sortDir})}">
+                            <button type="submit" class="btn btn-outline-danger">Удалить</button>
                         </form>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <p>
-        <h4><a href="/horse-create">Добавить лошадь</a></h4>
-        <p>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
 </body>
+<p>
 <nav aria-label="paginationHorses">
     <ul class="pagination justify-content-center">
 

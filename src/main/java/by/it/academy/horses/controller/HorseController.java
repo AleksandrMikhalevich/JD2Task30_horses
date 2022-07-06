@@ -33,26 +33,34 @@ public class HorseController {
         return "redirect:/";
     }
 
-    @GetMapping("/{id}")
-    public String editHorse(Model model, @PathVariable("id") long id) {
+    @GetMapping("/{id}/{pageNumber}/{sortField}/{sortDir}")
+    public String editHorse(Model model, @PathVariable("id") long id, @PathVariable int pageNumber, @PathVariable String sortField,
+                            @PathVariable String sortDir) {
         HorseDto horseDto = horseService.findById(id);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
         model.addAttribute("horse", horseDto);
         return "horse-update";
     }
 
     @PatchMapping("/{id}")
-    public String updateHorse(@ModelAttribute("horse") @Valid HorseDto horseDto,
+    public String updateHorse(Model model, @ModelAttribute("horse") @Valid HorseDto horseDto, int pageNumber, String sortField, String sortDir,
                               BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return "horse-update";
         horseService.save(horseDto);
-        return "redirect:/";
+        return getPaginatedHorses(pageNumber, sortField, sortDir, null, null, null, model);
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteHorse(@PathVariable("id") long id) {
+    @DeleteMapping("/{id}/{pageNumber}/{sortField}/{sortDir}")
+    public String deleteHorse(Model model, @PathVariable("id") long id, @PathVariable("pageNumber") int pageNumber, @PathVariable("sortField") String sortField,
+                              @PathVariable("sortDir") String sortDir) {
         horseService.deleteById(id);
-        return "redirect:/";
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        return getPaginatedHorses(pageNumber, sortField, sortDir, null, null, null, model);
     }
 
     @GetMapping("/page/{pageNumber}")
