@@ -11,6 +11,7 @@
 <div class="container">
     <form th:method="PATCH" th:action="@{/{id}(id=${horse.getId()})}" th:object="${horse}">
         <input type="hidden" name="pageNumber" th:value="${pageNumber}">
+        <input type="hidden" name="pageSize" th:value="${pageSize}">
         <input type="hidden" name="sortField" th:value="${sortField}">
         <input type="hidden" name="sortDir" th:value="${sortDir}">
         <label>Масть:

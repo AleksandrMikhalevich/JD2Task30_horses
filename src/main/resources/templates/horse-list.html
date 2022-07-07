@@ -17,41 +17,42 @@
                 <h5 class="modal-title" id="filtering">Настроить фильтры</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
             </div>
-            <form th:action="@{'/page/' + ${currentPage} + '?sortField=id&sortDir=asc'}">
-            <div class="modal-body">
-                <p>
-                    <label>Фильтрация по масти:
-                        <br>
-                        <select name="typeFilter">
-                            <option value="Гнедая">Гнедая</option>
-                            <option value="Вороная">Вороная</option>
-                            <option value="Серая">Серая</option>
-                            <option value="Рыжая">Рыжая</option>
-                        </select>
-                        <br>
-                    </label>
-                </p>
-                <p>
-                    <label>Фильтрация по возрасту:
-                        <br>
-                        <input type="text" name="ageFilter" placeholder="Укажите возраст">
-                        <br>
-                    </label>
-                </p>
-                <p>
-                    <label>Фильтрация по цене:
-                        <br>
-                        <input type="text" name="priceFilter" placeholder="Укажите цену">
-                        <br>
-                    </label>
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                <input type="hidden" name="sortField" value="id">
-                <input type="hidden" name="sortDir" value="asc">
-                <button type="submit" class="btn btn-primary">Сохранить</button>
-            </div>
+            <form th:action="@{'/page/' + ${currentPage} + '?pageSize=' + ${pageSize} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">
+                <div class="modal-body">
+                    <p>
+                        <label>Фильтрация по масти:
+                            <br>
+                            <select name="typeFilter">
+                                <option value="Гнедая">Гнедая</option>
+                                <option value="Вороная">Вороная</option>
+                                <option value="Серая">Серая</option>
+                                <option value="Рыжая">Рыжая</option>
+                            </select>
+                            <br>
+                        </label>
+                    </p>
+                    <p>
+                        <label>Фильтрация по возрасту:
+                            <br>
+                            <input type="text" name="ageFilter" placeholder="Укажите возраст">
+                            <br>
+                        </label>
+                    </p>
+                    <p>
+                        <label>Фильтрация по цене:
+                            <br>
+                            <input type="text" name="priceFilter" placeholder="Укажите цену">
+                            <br>
+                        </label>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <input type="hidden" name="pageSize" th:value="${pageSize}">
+                    <input type="hidden" name="sortField" th:value="${sortField}">
+                    <input type="hidden" name="sortDir" th:value="${sortDir}">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
             </form>
         </div>
     </div>
@@ -70,16 +71,16 @@
                 <thead>
                 <tr>
                     <th>
-                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir}}">№</a>
+                        <a th:href="@{'/page/' + ${currentPage} + '?pageSize=' + ${pageSize} + '&sortField=id&sortDir=' + ${reverseSortDir}}">№</a>
                     </th>
                     <th>
-                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=type&sortDir=' + ${reverseSortDir}}">Масть</a>
+                        <a th:href="@{'/page/' + ${currentPage} + '?pageSize=' + ${pageSize} + '&sortField=type&sortDir=' + ${reverseSortDir}}">Масть</a>
                     </th>
                     <th>
-                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=age&sortDir=' + ${reverseSortDir}}">Возраст</a>
+                        <a th:href="@{'/page/' + ${currentPage} + '?pageSize=' + ${pageSize} + '&sortField=age&sortDir=' + ${reverseSortDir}}">Возраст</a>
                     </th>
                     <th>
-                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=price&sortDir=' + ${reverseSortDir}}">Цена</a>
+                        <a th:href="@{'/page/' + ${currentPage} + '?pageSize=' + ${pageSize} + '&sortField=price&sortDir=' + ${reverseSortDir}}">Цена</a>
                     </th>
                     <th colspan="2">Действия</th>
                 </tr>
@@ -91,11 +92,12 @@
                     <td th:text="${horse.age}"></td>
                     <td th:text="${horse.price}"></td>
                     <td>
-                        <form th:action="@{/{id}/{page}/{sortField}/{sortDir}(id=${horse.id},page=${currentPage},sortField=${sortField},sortDir=${sortDir})}">
+                        <form th:action="@{/{id}/{page}/{pageSize}/{sortField}/{sortDir}(id=${horse.id},page=${currentPage}, pageSize=${pageSize}, sortField=${sortField},sortDir=${sortDir})}">
                             <button type="submit" class="btn btn-outline-warning">Редактировать</button>
                         </form>
                     <td>
-                        <form th:method="DELETE" th:action="@{/{id}/{page}/{sortField}/{sortDir}(id=${horse.id},page=${currentPage},sortField=${sortField},sortDir=${sortDir})}">
+                        <form th:method="DELETE"
+                              th:action="@{/{id}/{page}/{pageSize}/{sortField}/{sortDir}(id=${horse.id},page=${currentPage}, pageSize=${pageSize}, sortField=${sortField},sortDir=${sortDir})}">
                             <button type="submit" class="btn btn-outline-danger">Удалить</button>
                         </form>
                     </td>
@@ -111,18 +113,33 @@
 </body>
 <p>
 <nav aria-label="paginationHorses">
+    <div style="text-align: center;">
+        <form th:action="@{'/page/'+ ${currentPage} + '?pageSize=' + ${pageSize} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">
+        <label>Отображать по:
+            <select name="pageSize" th:value="pageSize">
+                <option value="5">5</option>
+                <option value="10">10</option>
+            </select>
+            <input type="hidden" name="sortField" th:value="${sortField}">
+            <input type="hidden" name="sortDir" th:value="${sortDir}">
+            <br>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </label>
+        </form>
+    </div>
+
     <ul class="pagination justify-content-center">
 
         <li class="page-item">
             <a class="page-link" th:if="${currentPage > 1}"
-               th:href="@{'/page/'+ ${1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Первая
+               th:href="@{'/page/'+ ${1} + '?pageSize=' + ${pageSize} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Первая
             </a>
             <span class="page-link disabled" th:unless="${currentPage > 1}">Первая</span>
         </li>
 
         <li class="page-item">
             <a class="page-link" th:if="${currentPage > 1}"
-               th:href="@{'/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">
+               th:href="@{'/page/' + ${currentPage - 1} + '?pageSize=' + ${pageSize} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">
                 <span aria-hidden="true">&laquo;</span>
             </a>
             <span class="page-link disabled" th:unless="${currentPage > 1}">&laquo;</span>
@@ -131,7 +148,7 @@
         <li class="d-flex flex-row page-item active" aria-current="page">
             <span th:each="i: ${#numbers.sequence(1, totalPages)}">
         <a class="page-link" th:if="${i != currentPage}"
-           th:href="@{'/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]
+           th:href="@{'/page/' + ${i} + '?pageSize=' + ${pageSize} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]
         </a>
         <span class="page-link active" th:unless="${i != currentPage}">[[${i}]]</span>
         </span>
@@ -139,7 +156,7 @@
 
         <li class="page-item">
             <a class="page-link" th:if="${currentPage < totalPages}"
-               th:href="@{'/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">
+               th:href="@{'/page/' + ${currentPage + 1} + '?pageSize=' + ${pageSize} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">
                 <span aria-hidden="true">&raquo;</span>
             </a>
             <span class="page-link disabled" th:unless="${currentPage < totalPages}">&raquo;</span>
@@ -147,7 +164,7 @@
 
         <li class="page-item">
             <a class="page-link" th:if="${currentPage < totalPages}"
-               th:href="@{'/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Последняя
+               th:href="@{'/page/' + ${totalPages} + '?pageSize=' + ${pageSize} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Последняя
             </a>
             <span class="page-link disabled" th:unless="${currentPage < totalPages}">Последняя</span>
         </li>

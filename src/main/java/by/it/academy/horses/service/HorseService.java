@@ -10,7 +10,7 @@ public interface HorseService {
 
     List<HorseDto> findAll();
 
-    Page<HorseDto> findAllPaginated(HorseFilter horseFilter, int pageNumber, String sortField, String sortDirection);
+    Page<HorseDto> findAllPaginated(HorseFilter horseFilter, int pageNumber, int pageSize, String sortField, String sortDirection);
 
     HorseDto findById(Long horseId);
 

@@ -34,7 +34,7 @@ public class HorseServiceImpl implements HorseService {
     }
 
     @Override
-    public Page<HorseDto> findAllPaginated(HorseFilter horseFilter, int pageNumber, String sortField, String sortDirection) {
+    public Page<HorseDto> findAllPaginated(HorseFilter horseFilter, int pageNumber, int pageSize, String sortField, String sortDirection) {
         Specification<Horse> horseSpecification =
                 Specification
                         .where(Optional.ofNullable(horseFilter.getAgeFilter())
@@ -48,7 +48,7 @@ public class HorseServiceImpl implements HorseService {
                                 .orElse(null));
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
                 Sort.by(sortField).descending();
-        Pageable paged = PageRequest.of(pageNumber - 1, 5, sort);
+        Pageable paged = PageRequest.of(pageNumber - 1, pageSize, sort);
         return horseRepository.findAll(horseSpecification, paged).map(horseMapper::toHorseDto);
     }
 

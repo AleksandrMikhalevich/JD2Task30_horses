@@ -33,11 +33,12 @@ public class HorseController {
         return "redirect:/";
     }
 
-    @GetMapping("/{id}/{pageNumber}/{sortField}/{sortDir}")
-    public String editHorse(Model model, @PathVariable("id") long id, @PathVariable int pageNumber, @PathVariable String sortField,
+    @GetMapping("/{id}/{pageNumber}/{pageSize}/{sortField}/{sortDir}")
+    public String editHorse(Model model, @PathVariable("id") long id, @PathVariable int pageNumber, @PathVariable int pageSize, @PathVariable String sortField,
                             @PathVariable String sortDir) {
         HorseDto horseDto = horseService.findById(id);
         model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("pageSize", pageSize);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("horse", horseDto);
@@ -45,26 +46,27 @@ public class HorseController {
     }
 
     @PatchMapping("/{id}")
-    public String updateHorse(Model model, @ModelAttribute("horse") @Valid HorseDto horseDto, int pageNumber, String sortField, String sortDir,
+    public String updateHorse(Model model, @ModelAttribute("horse") @Valid HorseDto horseDto, int pageNumber, int pageSize, String sortField, String sortDir,
                               BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return "horse-update";
         horseService.save(horseDto);
-        return getPaginatedHorses(pageNumber, sortField, sortDir, null, null, null, model);
+        return getPaginatedHorses(pageNumber, pageSize, sortField, sortDir, null, null, null, model);
     }
 
-    @DeleteMapping("/{id}/{pageNumber}/{sortField}/{sortDir}")
-    public String deleteHorse(Model model, @PathVariable("id") long id, @PathVariable("pageNumber") int pageNumber, @PathVariable("sortField") String sortField,
+    @DeleteMapping("/{id}/{pageNumber}/{pageSize}/{sortField}/{sortDir}")
+    public String deleteHorse(Model model, @PathVariable("id") long id, @PathVariable("pageNumber") int pageNumber, @PathVariable int pageSize, @PathVariable("sortField") String sortField,
                               @PathVariable("sortDir") String sortDir) {
         horseService.deleteById(id);
         model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("pageSize", pageSize);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
-        return getPaginatedHorses(pageNumber, sortField, sortDir, null, null, null, model);
+        return getPaginatedHorses(pageNumber, pageSize, sortField, sortDir, null, null, null, model);
     }
 
     @GetMapping("/page/{pageNumber}")
-    public String getPaginatedHorses(@PathVariable("pageNumber") int pageNumber, @RequestParam("sortField") String sortField,
+    public String getPaginatedHorses(@PathVariable("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize, @RequestParam("sortField") String sortField,
                                      @RequestParam("sortDir") String sortDir, @Param("typeFilter") String typeFilter,
                                      @Param("ageFilter") Integer ageFilter, @Param("priceFilter") Double priceFilter, Model model) {
         HorseFilter horseFilter = HorseFilter.builder()
@@ -72,11 +74,12 @@ public class HorseController {
                 .ageFilter(ageFilter)
                 .priceFilter(priceFilter)
                 .build();
-        Page<HorseDto> page = horseService.findAllPaginated(horseFilter, pageNumber, sortField, sortDir);
+        Page<HorseDto> page = horseService.findAllPaginated(horseFilter, pageNumber, pageSize, sortField, sortDir);
         int totalPages = page.getTotalPages();
         long totalItems = page.getTotalElements();
         List<HorseDto> horses = page.getContent();
         model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("pageSize", pageSize);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalItems", totalItems);
         model.addAttribute("sortField", sortField);
@@ -88,6 +91,6 @@ public class HorseController {
 
     @GetMapping("/")
     public String showHorsesFirstPage(Model model) {
-        return getPaginatedHorses(1, "id", "asc", null, null, null, model);
+        return getPaginatedHorses(1, 5, "id", "asc", null, null, null, model);
     }
 }
